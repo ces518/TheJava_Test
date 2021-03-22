@@ -1,17 +1,30 @@
 package me.june.test;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
     @Test
 	@DisplayName("스터디 생성")
+	@EnabledOnOs(OS.MAC) // Annotation 으로 제공
     void create() {
+    	// 특정 환경변수에 따라 테스트를 실행
+    	assumeTrue("LOCAL".equalsIgnoreCase(System.getProperty("TEST_ENV")));
+
+    	// 특정 환경에 따라 실행
+		assumingThat("LOCAL".equalsIgnoreCase(System.getProperty("TEST_ENV")), () -> {
+			Study study = new Study(100);
+		});
+
         Study study = new Study(1);
         assertNotNull(study);
 
