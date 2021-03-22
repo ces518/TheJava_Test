@@ -13,8 +13,7 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
-	@Tag("fast")
-    @Test
+	@FastTest
 	@DisplayName("스터디 생성")
 	@EnabledOnOs(OS.MAC) // Annotation 으로 제공
     void create() {
@@ -55,8 +54,7 @@ class StudyTest {
 		assertTimeoutPreemptively(Duration.ofSeconds(10), () -> new Study(10));
 	}
 
-	@Tag("fast")
-    @Test
+	@SlowTest
     @Disabled
     void disabled() {
 
