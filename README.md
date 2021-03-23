@@ -19,3 +19,5 @@
 [Junit 테스트 반복하기 - 2](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20테스트%20반복하기%202.md)
 
 [Junit 테스트 인스턴스](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20테스트%20인스턴스.md)
+
+[Junit 테스트 순서](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20테스트%20순서.md)

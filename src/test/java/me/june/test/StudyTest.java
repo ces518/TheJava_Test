@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StudyTest {
 
 	@FastTest
@@ -64,12 +66,14 @@ class StudyTest {
 		assertTimeoutPreemptively(Duration.ofSeconds(10), () -> new Study(10));
 	}
 
+	@Order(1)
 	@SlowTest
     @Disabled
     void disabled() {
 
     }
 
+    @Order(2)
     @DisplayName("반복 테스트")
     @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
     void repeatTest(RepetitionInfo repetitionInfo) {
