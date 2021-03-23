@@ -3,6 +3,8 @@ package me.june.test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
 
@@ -58,6 +60,25 @@ class StudyTest {
     @Disabled
     void disabled() {
 
+    }
+
+    @DisplayName("반복 테스트")
+    @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
+    void repeatTest(RepetitionInfo repetitionInfo) {
+	    // 현재 몇번째 반복중인지
+        // 총 몇번을 반복해야 하는지 정보를 알 수 있음
+        System.out.println("repeatTest" + repetitionInfo.getCurrentRepetition() + "/" + repetitionInfo.getTotalRepetitions());
+    }
+
+    // Junit 5 는 기본 제공, Junit4 는 서드파티 라이브러리 필요
+    @DisplayName("파라미터 테스트")
+    @ParameterizedTest(name = "{displayName}, {index} {arguments}")
+    @ValueSource(strings = {
+        "hello",
+        "world"
+    })
+    void parameterizedTest(String value) {
+        System.out.println("value = " + value);
     }
 
     /**
