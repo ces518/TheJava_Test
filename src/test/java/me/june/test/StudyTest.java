@@ -3,7 +3,9 @@ package me.june.test;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.AggregateWith;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -22,8 +24,13 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 //@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(FindSlowTestExtension.class) // 선언적인 Extension 사용 방법, 이 방법은 Extension 을 커스터마이징 할 수 없다..
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StudyTest {
+
+	// 프로그래밍으로 등록하는 방법
+	@RegisterExtension
+	static FindSlowTestExtension findSlowTestExtension = new FindSlowTestExtension(1000L);
 
 	@FastTest
 	@DisplayName("스터디 생성") // DisplayName 의 우선순위가 젤 높음
