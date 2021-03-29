@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.api.Assumptions.assumingThat;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+//@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class StudyTest {
 
 	@FastTest
-	@DisplayName("스터디 생성")
+	@DisplayName("스터디 생성") // DisplayName 의 우선순위가 젤 높음
 	@EnabledOnOs(OS.MAC) // Annotation 으로 제공
     void create() {
     	// 특정 환경변수에 따라 테스트를 실행
