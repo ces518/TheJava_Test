@@ -25,3 +25,5 @@
 [Junit 설정](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20설정.md)
 
 [Junit 확장 모델](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20확장%20모델.md)
+
+[Junit 마이그레이션](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20마이그레이션.md)
