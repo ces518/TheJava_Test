@@ -32,4 +32,4 @@
 
 [Mockito 시작하기](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Mockito%20시작하기.md)
 
-[Junit Mock 객체 만들기](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Junit%20Mock%20객체%20만들기.md)
+[Mock 객체 만들기](https://github.com/ces518/TIL/blob/master/unit-test/더%20자바%2C%20애플리케이션을%20테스트하는%20방법%20-%20Mock%20객체%20만들기.md)
