@@ -1,5 +1,6 @@
 package me.june.test;
 
+import me.june.test.domain.Study;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
