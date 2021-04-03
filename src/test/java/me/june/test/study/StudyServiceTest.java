@@ -5,15 +5,16 @@ import me.june.test.domain.Study;
 import me.june.test.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StudyServiceTest {
@@ -47,23 +48,34 @@ class StudyServiceTest {
         member.setId(1L);
 
         // Mocking 된 객체의 void 메소드는 기본적으로 아무런 행위도 하지 않는다.
-        memberService.validate(1L);
+//        memberService.validate(1L);
 
 
         // Stubbing : Mocking 한 객체가 어떤 행위를 할때 어떤 행동을 할지를 정하는것
         when(memberService.findById(any())).thenReturn(Optional.of(member));
 
         // void method Stubbing 은 방법이 다르다.
-        doThrow(RuntimeException.class).when(memberService).validate(any());
+//        doThrow(RuntimeException.class).when(memberService).validate(any());
 
 
         Study study = new Study(10, "java");
 
         // when
-        studyService.createNewStudy(1L, study);
+        Study newStudy = studyService.createNewStudy(1L, study);
 
 
         // then
-        assertNotNull(studyService);
+
+        assertEquals(study.getOwner(), member);
+
+        // 특정 메소드 호출
+        verify(memberService).notify(newStudy);
+
+        // 아무것도 하지 않는지 검증
+        verifyNoInteractions(member);
+
+        // 순서대로 호출이 되었는지 검증
+        InOrder inOrder = inOrder(memberService);
+        inOrder.verify(memberService).notify(newStudy);
     }
 }
