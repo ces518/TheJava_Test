@@ -14,6 +14,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +54,9 @@ class StudyServiceTest {
 
 
         // Stubbing : Mocking 한 객체가 어떤 행위를 할때 어떤 행동을 할지를 정하는것
-        when(memberService.findById(any())).thenReturn(Optional.of(member));
+        // BDD Style 은 when -> given , then -> willReturn
+        // BDDMockito 클래스로 제공됨
+        given(memberService.findById(any())).willReturn(Optional.of(member));
 
         // void method Stubbing 은 방법이 다르다.
 //        doThrow(RuntimeException.class).when(memberService).validate(any());
@@ -71,8 +75,13 @@ class StudyServiceTest {
         // 특정 메소드 호출
         verify(memberService).notify(newStudy);
 
+        // BDD Style verify -> then
+        then(memberService).should().notify(newStudy);
+
         // 아무것도 하지 않는지 검증
-        verifyNoInteractions(member);
+        verifyNoInteractions(memberService);
+
+        then(memberService).shouldHaveNoMoreInteractions();
 
         // 순서대로 호출이 되었는지 검증
         InOrder inOrder = inOrder(memberService);
