@@ -3,6 +3,8 @@ package me.june.test.study;
 import me.june.test.domain.Member;
 import me.june.test.domain.Study;
 import me.june.test.member.MemberService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -11,6 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
@@ -24,6 +29,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@Testcontainers
 class StudyServiceTest {
 
     // 구현체는 없지만, 의존 하는 클래스들에 대한 인터페이스 기반으로 구현해야 하는경우
@@ -34,6 +40,24 @@ class StudyServiceTest {
     @Mock MemberService memberService;
 
     @Autowired StudyRepository studyRepository;
+
+    // 필드 일 경우 모든 테스트 마다 컨테이너를 새로 띄운다.
+	// 스태틱 필드일 경우 해당 테스트 클래스 전역에서 공유한다.
+	@Container
+    static PostgreSQLContainer container = new PostgreSQLContainer()
+			.withDatabaseName("studytest")
+			.withUsername("studytest")
+			.withPassword("studytest");
+
+    @BeforeAll
+	static void setUp() {
+    	container.start();
+	}
+
+	@AfterAll
+	static void clean() {
+    	container.stop();
+	}
 
       /*
         코드 레벨에서 Mocking 하는 방법
