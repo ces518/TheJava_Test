@@ -8,6 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Optional;
 
@@ -18,7 +21,9 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 class StudyServiceTest {
 
     // 구현체는 없지만, 의존 하는 클래스들에 대한 인터페이스 기반으로 구현해야 하는경우
@@ -28,7 +33,7 @@ class StudyServiceTest {
     // MockitoExtension 이 존재해야 한다.
     @Mock MemberService memberService;
 
-    @Mock StudyRepository studyRepository;
+    @Autowired StudyRepository studyRepository;
 
       /*
         코드 레벨에서 Mocking 하는 방법
@@ -79,7 +84,7 @@ class StudyServiceTest {
         then(memberService).should().notify(newStudy);
 
         // 아무것도 하지 않는지 검증
-        verifyNoInteractions(memberService);
+//        verifyNoInteractions(memberService);
 
         then(memberService).shouldHaveNoMoreInteractions();
 
