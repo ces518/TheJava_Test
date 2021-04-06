@@ -1,5 +1,6 @@
 package me.june.test.study;
 
+import lombok.extern.slf4j.Slf4j;
 import me.june.test.domain.Member;
 import me.june.test.domain.Study;
 import me.june.test.member.MemberService;
@@ -13,7 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -30,6 +34,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @Testcontainers
+@Slf4j
 class StudyServiceTest {
 
     // 구현체는 없지만, 의존 하는 클래스들에 대한 인터페이스 기반으로 구현해야 하는경우
@@ -43,14 +48,26 @@ class StudyServiceTest {
 
     // 필드 일 경우 모든 테스트 마다 컨테이너를 새로 띄운다.
 	// 스태틱 필드일 경우 해당 테스트 클래스 전역에서 공유한다.
+//	@Container
+//    static PostgreSQLContainer container = new PostgreSQLContainer()
+//			.withDatabaseName("studytest")
+//			.withUsername("studytest")
+//			.withPassword("studytest");
+
 	@Container
-    static PostgreSQLContainer container = new PostgreSQLContainer()
-			.withDatabaseName("studytest")
-			.withUsername("studytest")
-			.withPassword("studytest");
+	static GenericContainer container = new GenericContainer("postgres") // imageName 은 로컬에서 찾아보고 없다면 원격에서 찾아온다.
+			.withExposedPorts(5432) // port는 설정이 불가능하고, 사용가능한 포트중에서 랜덤하게 매핑한다.
+			.withEnv("POSTGRES_DB", "studytest")
+			.waitingFor(Wait.forListeningPort()) // 컨테이너가 사용 가능한지 대기했다가 사용하는 옵션
+			.waitingFor(Wait.forHttp("/hello")) // 컨테이너가 사용 가능한지 대기했다가 사용하는 옵션
+			;
 
     @BeforeAll
 	static void setUp() {
+		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(log);
+		container.followOutput(logConsumer); // 컨테이너 내부의 로그를 스트리밍 한다.
+    	container.getMappedPort(5432); // 컨테이너 포트와 매핑된 로컬 포트 확인
+		container.getLogs(); // 모든 로그들 출력
     	container.start();
 	}
 
