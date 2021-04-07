@@ -21,6 +21,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.testcontainers.containers.DockerComposeContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
@@ -28,6 +29,7 @@ import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.File;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,14 +44,14 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 @Testcontainers
 @Slf4j
-@ContextConfiguration(initializers = StudyServiceTest.ContainerPropertyInitializer.class)
+//@ContextConfiguration(initializers = StudyServiceTest.ContainerPropertyInitializer.class)
 class StudyServiceTest {
 
 	@Autowired
 	Environment environment;
 
-	@Value("${container.port}")
-	int port;
+//	@Value("${container.port}")
+//	int port;
 
     // 구현체는 없지만, 의존 하는 클래스들에 대한 인터페이스 기반으로 구현해야 하는경우
     // Mocking 하기 가장 좋다.
@@ -68,21 +70,27 @@ class StudyServiceTest {
 //			.withUsername("studytest")
 //			.withPassword("studytest");
 
-	@Container
-	static GenericContainer container = new GenericContainer("postgres") // imageName 은 로컬에서 찾아보고 없다면 원격에서 찾아온다.
-			.withExposedPorts(5432) // port는 설정이 불가능하고, 사용가능한 포트중에서 랜덤하게 매핑한다.
-			.withEnv("POSTGRES_DB", "studytest")
-			.withEnv("POSTGRES_PASSWORD", "studytest")
+//	@Container
+//	static GenericContainer container = new GenericContainer("postgres") // imageName 은 로컬에서 찾아보고 없다면 원격에서 찾아온다.
+//			.withExposedPorts(5432) // port는 설정이 불가능하고, 사용가능한 포트중에서 랜덤하게 매핑한다.
+//			.withEnv("POSTGRES_DB", "studytest")
+//			.withEnv("POSTGRES_PASSWORD", "studytest")
 //			.waitingFor(Wait.forListeningPort()) // 컨테이너가 사용 가능한지 대기했다가 사용하는 옵션
 //			.waitingFor(Wait.forHttp("/hello")) // 컨테이너가 사용 가능한지 대기했다가 사용하는 옵션
 			;
 
+	@Container
+	static DockerComposeContainer container =
+			new DockerComposeContainer(new File("src/test/resources/docker-compose.yml"));
+	// docker-compose 에 서비스가 많다면, 컨테이너 초기화가 다 이뤄지지 않았음애도 테스트가 실행되는 문제가 있음
+	// Wait 기능을 사용해서 어느정도 대기를 해주어야 한다.
+
     @BeforeAll
 	static void setUp() {
-		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(log);
-		container.followOutput(logConsumer); // 컨테이너 내부의 로그를 스트리밍 한다.
-    	container.getMappedPort(5432); // 컨테이너 포트와 매핑된 로컬 포트 확인
-		container.getLogs(); // 모든 로그들 출력
+//		Slf4jLogConsumer logConsumer = new Slf4jLogConsumer(log);
+//		container.followOutput(logConsumer); // 컨테이너 내부의 로그를 스트리밍 한다.
+//    	container.getMappedPort(5432); // 컨테이너 포트와 매핑된 로컬 포트 확인
+//		container.getLogs(); // 모든 로그들 출력
     	container.start();
 	}
 
@@ -95,7 +103,7 @@ class StudyServiceTest {
 	@BeforeEach
 	void beforeEach() {
 		System.out.println(environment.getProperty("container.port"));
-		System.out.println("port = " + port);
+//		System.out.println("port = " + port);
 	}
       /*
         코드 레벨에서 Mocking 하는 방법
@@ -155,14 +163,14 @@ class StudyServiceTest {
         inOrder.verify(memberService).notify(newStudy);
     }
 
-    static class ContainerPropertyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-		@Override
-		public void initialize(ConfigurableApplicationContext context) {
-			// 가변인자로 여러개를 구성할 수 있다.
-			// 단점은 key=value 의 문자열 형태로 넘겨주어야 한다
-			TestPropertyValues.of("container.port=" + container.getMappedPort(5432))
-				.applyTo(context.getEnvironment()); // Spring Environment 객체에 등록
-		}
-	}
+//    static class ContainerPropertyInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+//
+//		@Override
+//		public void initialize(ConfigurableApplicationContext context) {
+//			// 가변인자로 여러개를 구성할 수 있다.
+//			// 단점은 key=value 의 문자열 형태로 넘겨주어야 한다
+//			TestPropertyValues.of("container.port=" + container.getMappedPort(5432))
+//				.applyTo(context.getEnvironment()); // Spring Environment 객체에 등록
+//		}
+//	}
 }
