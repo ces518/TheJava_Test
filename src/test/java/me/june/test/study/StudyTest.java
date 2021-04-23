@@ -1,5 +1,8 @@
-package me.june.test;
+package me.june.test.study;
 
+import me.june.test.FastTest;
+import me.june.test.FindSlowTestExtension;
+import me.june.test.SlowTest;
 import me.june.test.domain.Study;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.EnabledOnOs;
