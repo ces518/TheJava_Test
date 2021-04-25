@@ -7,6 +7,8 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.junit.jupiter.api.Test;
 
+import javax.persistence.Entity;
+
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
@@ -20,6 +22,20 @@ class ArchTests {
      * ArchUnit 은 Junit Engine 을 확장해서, ArchUnit JUnit Module 을 만들었다 (순수한 Jupiter Engine 을 사용하는 것이 아님)
      * -> 일반적으로 ExtendWith (Extension 확장) Register, RegisterExtension 을 활용한 Extension 확장 방식을 사용
      */
+    @ArchTest // Controller 클래스는 Service 와 Repository 를 참조할 수 있다.
+    ArchRule controllerClassRule = classes().that().haveSimpleNameEndingWith("Controller")
+        .should().accessClassesThat().haveSimpleNameEndingWith("Service")
+        .orShould().accessClassesThat().haveSimpleNameEndingWith("Repository");
+
+    @ArchTest // Repository 는 Service 를 참조할 수 없다.
+    ArchRule repositoryClassRule = noClasses().that().haveSimpleNameEndingWith("Repository")
+        .should().accessClassesThat().haveSimpleNameEndingWith("Service");
+
+    @ArchTest // Study 로 시작하는 클래스 중 Enum , @Entity 애노테이션을 사용하지 않은 클래스는 study 패키지 내에 존재해야 한다.
+    ArchRule studyClassesRule = classes().that().haveSimpleNameStartingWith("Study")
+        .and().areNotEnums()
+        .and().areNotAnnotatedWith(Entity.class)
+        .should().resideInAnyPackage("..study..");
 
     @ArchTest
     ArchRule domainPackageRule = classes().that().resideInAPackage("..domain..")
