@@ -2,6 +2,8 @@ package me.june.test;
 
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +11,31 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
+@AnalyzeClasses(packagesOf = TestApplication.class)
 class ArchTests {
+
+    /**
+     * ArchTest 애노테이션을 사용하면, @DisplayName 을 지정할 수 없다는 점이 단점
+     *
+     * ArchUnit 은 Junit Engine 을 확장해서, ArchUnit JUnit Module 을 만들었다 (순수한 Jupiter Engine 을 사용하는 것이 아님)
+     * -> 일반적으로 ExtendWith (Extension 확장) Register, RegisterExtension 을 활용한 Extension 확장 방식을 사용
+     */
+
+    @ArchTest
+    ArchRule domainPackageRule = classes().that().resideInAPackage("..domain..")
+        .should().onlyBeAccessed().byClassesThat().resideInAnyPackage("..study..", "..member..", "..domain..");
+
+    @ArchTest
+    ArchRule memberPackageRule = noClasses().that().resideInAPackage("..domain..")
+        .should().accessClassesThat().resideInAPackage("..member..");
+
+    @ArchTest
+    ArchRule studyPackageRule = noClasses().that().resideOutsideOfPackage("..study..")
+        .should().accessClassesThat().resideInAPackage("..study..");
+
+    @ArchTest
+    ArchRule freeOfCycles = slices().matching("..test.(*)..")
+        .should().beFreeOfCycles();
 
     @Test
     void packageDependencyTests() {
